@@ -2,6 +2,7 @@ package main
 
 import (
 	"fmt"
+	"math/rand"
 	"os"
 	"strings"
 
@@ -92,6 +93,29 @@ func reference(lines []string) {
 	}
 }
 
+func genTest(typ string, lines []string) {
+	var dict map[string][]string
+	switch typ {
+	case "hira":
+		dict = hiragana
+	case "kata":
+		dict = katakana
+	default:
+		dict = roma
+	}
+	t := []string{}
+	for _, k := range lines {
+		data, ok := dict[k]
+		if ok {
+			t = append(t, data...)
+		}
+	}
+	rand.Shuffle(len(t), func(i, j int) {
+		t[i], t[j] = t[j], t[i]
+	})
+	fmt.Println(strings.Join(t, ", "))
+}
+
 func main() {
 	app := cli.NewApp()
 	app.Name = "gojuon"
@@ -103,6 +127,22 @@ func main() {
 			Usage:   "print gojuon list",
 			Action: func(c *cli.Context) {
 				reference(c.Args())
+			},
+		},
+		{
+			Name:    "gen",
+			Aliases: []string{"g"},
+			Usage:   "print gojuon test",
+			Flags: []cli.Flag{
+				cli.StringFlag{
+					Name:  "type",
+					Value: "roma",
+					Usage: "roma|hira(gana)|kata(gana)",
+				},
+			},
+			Action: func(c *cli.Context) {
+				typ := c.String("type")
+				genTest(typ, c.Args())
 			},
 		},
 	}
