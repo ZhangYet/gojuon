@@ -120,6 +120,7 @@ func main() {
 	app := cli.NewApp()
 	app.Name = "gojuon"
 	app.Usage = "help japanese amateur learn gojuon."
+	app.Version = "0.1.0"
 	app.Commands = []cli.Command{
 		{
 			Name:    "reference",
