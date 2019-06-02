@@ -79,7 +79,7 @@ func init() {
 }
 
 func printGojuon(g gojuon) string {
-	return fmt.Sprintf("%s: %s %s", g.roma, g.hira, g.hira)
+	return fmt.Sprintf("%s: %s %s", g.roma, g.hira, g.kata)
 }
 
 func reference(lines []string) {
@@ -120,7 +120,7 @@ func main() {
 	app := cli.NewApp()
 	app.Name = "gojuon"
 	app.Usage = "help japanese amateur learn gojuon."
-	app.Version = "0.1.0"
+	app.Version = "0.1.1"
 	app.Commands = []cli.Command{
 		{
 			Name:    "reference",
