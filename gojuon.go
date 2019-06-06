@@ -10,6 +10,8 @@ import (
 	"github.com/urfave/cli"
 )
 
+var Version string
+
 var roma = map[string][]string{
 	"a":  {"a", "i", "u", "e", "o"},
 	"k":  {"ka", "ki", "ku", "ke", "ko"},
@@ -122,7 +124,7 @@ func main() {
 	app := cli.NewApp()
 	app.Name = "gojuon"
 	app.Usage = "help japanese amateur learn gojuon."
-	app.Version = "0.1.2"
+	app.Version = Version
 	app.Commands = []cli.Command{
 		{
 			Name:    "reference",

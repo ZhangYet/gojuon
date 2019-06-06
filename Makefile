@@ -1,4 +1,4 @@
 .PHONY: all
 
 all:
-	go build -o bin/gojuon gojuon.go
+	go build -ldflags "-X main.Version=`git describe --tags || echo "nightly"`" -o bin/gojuon gojuon.go
