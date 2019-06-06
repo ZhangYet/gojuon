@@ -5,50 +5,51 @@ import (
 	"math/rand"
 	"os"
 	"strings"
+	"time"
 
 	"github.com/urfave/cli"
 )
 
 var roma = map[string][]string{
-	"a":  []string{"a", "i", "u", "e", "o"},
-	"k":  []string{"ka", "ki", "ku", "ke", "ko"},
-	"s":  []string{"sa", "shi", "su", "se", "so"},
-	"t":  []string{"ta", "chi", "tsu", "te", "to"},
-	"n":  []string{"na", "ni", "nu", "ne", "no"},
-	"h":  []string{"ha", "hi", "fu", "he", "ho"},
-	"m":  []string{"ma", "mi", "mu", "me", "mo"},
-	"y":  []string{"ya", "yu", "yo"},
-	"r":  []string{"ra", "ri", "ru", "re", "ro"},
-	"w":  []string{"wa", "wi", "wo"},
-	"nn": []string{"n"},
+	"a":  {"a", "i", "u", "e", "o"},
+	"k":  {"ka", "ki", "ku", "ke", "ko"},
+	"s":  {"sa", "shi", "su", "se", "so"},
+	"t":  {"ta", "chi", "tsu", "te", "to"},
+	"n":  {"na", "ni", "nu", "ne", "no"},
+	"h":  {"ha", "hi", "fu", "he", "ho"},
+	"m":  {"ma", "mi", "mu", "me", "mo"},
+	"y":  {"ya", "yu", "yo"},
+	"r":  {"ra", "ri", "ru", "re", "ro"},
+	"w":  {"wa", "wi", "wo"},
+	"nn": {"n"},
 }
 
 var hiragana = map[string][]string{
-	"a":  []string{"あ", "い", "う", "え", "お"},
-	"k":  []string{"か", "き", "く", "け", "こ"},
-	"s":  []string{"さ", "し", "す", "せ", "そ"},
-	"t":  []string{"た", "ち", "つ", "て", "と"},
-	"n":  []string{"な", "に", "ぬ", "ね", "の"},
-	"h":  []string{"は", "ひ", "ふ", "へ", "ほ"},
-	"m":  []string{"ま", "み", "む", "め", "も"},
-	"y":  []string{"や", "ゆ", "よ"},
-	"r":  []string{"ら", "り", "る", "れ", "ろ"},
-	"w":  []string{"わ", "ゐ", "を"},
-	"nn": []string{"ん"},
+	"a":  {"あ", "い", "う", "え", "お"},
+	"k":  {"か", "き", "く", "け", "こ"},
+	"s":  {"さ", "し", "す", "せ", "そ"},
+	"t":  {"た", "ち", "つ", "て", "と"},
+	"n":  {"な", "に", "ぬ", "ね", "の"},
+	"h":  {"は", "ひ", "ふ", "へ", "ほ"},
+	"m":  {"ま", "み", "む", "め", "も"},
+	"y":  {"や", "ゆ", "よ"},
+	"r":  {"ら", "り", "る", "れ", "ろ"},
+	"w":  {"わ", "ゐ", "を"},
+	"nn": {"ん"},
 }
 
 var katakana = map[string][]string{
-	"a":  []string{"ア", "イ", "ウ", "エ", "オ"},
-	"k":  []string{"カ", "キ", "ク", "ケ", "コ"},
-	"s":  []string{"サ", "シ", "ス", "セ", "ソ"},
-	"t":  []string{"タ", "チ", "ツ", "テ", "ト"},
-	"n":  []string{"ナ", "ニ", "ヌ", "ネ", "ノ"},
-	"h":  []string{"ハ", "ヒ", "フ", "ヘ", "ホ"},
-	"m":  []string{"マ", "ミ", "ム", "メ", "モ"},
-	"y":  []string{"ヤ", "ユ", "ヨ"},
-	"r":  []string{"ラ", "リ", "ル", "レ", "ロ"},
-	"w":  []string{"ワ", "ヰ", "ヲ"},
-	"nn": []string{"ン"},
+	"a":  {"ア", "イ", "ウ", "エ", "オ"},
+	"k":  {"カ", "キ", "ク", "ケ", "コ"},
+	"s":  {"サ", "シ", "ス", "セ", "ソ"},
+	"t":  {"タ", "チ", "ツ", "テ", "ト"},
+	"n":  {"ナ", "ニ", "ヌ", "ネ", "ノ"},
+	"h":  {"ハ", "ヒ", "フ", "ヘ", "ホ"},
+	"m":  {"マ", "ミ", "ム", "メ", "モ"},
+	"y":  {"ヤ", "ユ", "ヨ"},
+	"r":  {"ラ", "リ", "ル", "レ", "ロ"},
+	"w":  {"ワ", "ヰ", "ヲ"},
+	"nn": {"ン"},
 }
 
 type gojuon struct {
@@ -110,6 +111,7 @@ func genTest(typ string, lines []string) {
 			t = append(t, data...)
 		}
 	}
+	rand.Seed(time.Now().Unix())
 	rand.Shuffle(len(t), func(i, j int) {
 		t[i], t[j] = t[j], t[i]
 	})
@@ -120,7 +122,7 @@ func main() {
 	app := cli.NewApp()
 	app.Name = "gojuon"
 	app.Usage = "help japanese amateur learn gojuon."
-	app.Version = "0.1.1"
+	app.Version = "0.1.2"
 	app.Commands = []cli.Command{
 		{
 			Name:    "reference",
