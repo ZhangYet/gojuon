@@ -7,6 +7,8 @@ import (
 	"strings"
 	"time"
 
+	"github.com/ZhangYet/gojuon/libs"
+
 	"github.com/urfave/cli"
 )
 
@@ -120,12 +122,39 @@ func genTest(typ string, lines []string) {
 	fmt.Println(strings.Join(t, ", "))
 }
 
+var wordBook libs.WordBook
+
 func main() {
 	app := cli.NewApp()
 	app.Name = "gojuon"
 	app.Usage = "help japanese amateur learn gojuon."
 	app.Version = Version
+	app.Before = func(context *cli.Context) error {
+		homeDir := os.Getenv("HOME")
+		wordBook = libs.NewFileWorkBook(homeDir + "/.wordbook")
+		return nil
+	}
 	app.Commands = []cli.Command{
+		{
+			Name:    "record",
+			Aliases: []string{"re"},
+			Usage:   "record japanese word",
+			Flags: []cli.Flag{
+				cli.StringFlag{
+					Name:  "word",
+					Usage: "record a new word",
+				},
+			},
+			Action: func(c *cli.Context) error {
+				keyword := c.String("word")
+				record, err := wordBook.Search(keyword)
+				if err != nil {
+					return err
+				}
+				fmt.Println(record.Word.String())
+				return wordBook.Record(record)
+			},
+		},
 		{
 			Name:    "reference",
 			Aliases: []string{"r"},
