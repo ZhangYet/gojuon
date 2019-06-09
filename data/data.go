@@ -3,10 +3,11 @@ package data
 import (
 	"bytes"
 	"compress/gzip"
-
-	"github.com/gojp/nihongo/lib/dictionary"
+	"fmt"
+	"strings"
 
 	"github.com/gobuffalo/packr/v2"
+	"github.com/gojp/nihongo/lib/dictionary"
 )
 
 var Box *packr.Box
@@ -27,4 +28,12 @@ func init() {
 	if err != nil {
 		panic(err)
 	}
+}
+
+func GetEnglish(entry dictionary.Entry) string {
+	englishList := make([]string, len(entry.Glosses))
+	for idx, gloss := range entry.Glosses {
+		englishList[idx] = fmt.Sprintf("%d: %s", idx, gloss.English)
+	}
+	return strings.Join(englishList, "; ")
 }

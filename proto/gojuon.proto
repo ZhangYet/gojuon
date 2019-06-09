@@ -1,0 +1,32 @@
+syntax = "proto3";
+package gojuon.dict;
+
+import "google/protobuf/timestamp.proto";
+
+service DictService {
+    rpc Search(SearchRequest) returns (SearchResponse) {};
+    rpc Record(RecordRequest) returns (RecordResponse) {};
+}
+
+message SearchRequest {
+    string keyword = 1;
+}
+
+message WordRecord {
+    string japanese = 1;
+    string furigana = 2;
+    string english = 3;
+    google.protobuf.Timestamp createTime = 4;
+}
+
+message SearchResponse {
+    WordRecord record = 1;
+}
+
+message RecordRequest {
+     WordRecord record = 1;
+}
+
+message RecordResponse {
+    google.protobuf.Timestamp createTime = 1;
+}

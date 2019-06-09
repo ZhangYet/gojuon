@@ -3,6 +3,7 @@ package data
 import (
 	"compress/gzip"
 	"fmt"
+	"github.com/ZhangYet/gojuon/common"
 	"os"
 	"strings"
 	"testing"
