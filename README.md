@@ -1,6 +1,6 @@
 # gojuon
 
-gojuon is a little tool help Japanese amateur learn gojunon
+gojuon is a little tool help Japanese amateur learn gojuon
 
 ## install 
 
