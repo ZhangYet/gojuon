@@ -5,7 +5,9 @@ gojuon is a little tool help Japanese amateur learn gojuon
 ## install 
 
 ```bash
-go get -u github.com/ZhangYet/gojuon
+git clone https://github.com/ZhangYet/gojuon.git
+cd gojuon
+go install ./...
 ```
 
 ## usage
