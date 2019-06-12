@@ -4,3 +4,4 @@ bin/*
 data/data-packr.go
 packrd/*
 .idea/*
+data/packrd/*
