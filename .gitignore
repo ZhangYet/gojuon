@@ -1,4 +1,6 @@
 vendor/*
 bin/*
 *.*~
+data/data-packr.go
+packrd/*
 .idea/*
