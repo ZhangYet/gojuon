@@ -285,7 +285,7 @@ var _ grpc.ClientConn
 // is compatible with the grpc package it is being compiled against.
 const _ = grpc.SupportPackageIsVersion4
 
-// DictServiceClient is the client API for DictService server.
+// DictServiceClient is the client API for DictService gojuond.
 //
 // For semantics around ctx use and closing/ending streaming RPCs, please refer to https://godoc.org/google.golang.org/grpc#ClientConn.NewStream.
 type DictServiceClient interface {
@@ -319,7 +319,7 @@ func (c *dictServiceClient) Record(ctx context.Context, in *RecordRequest, opts 
 	return out, nil
 }
 
-// DictServiceServer is the server API for DictService server.
+// DictServiceServer is the gojuond API for DictService gojuond.
 type DictServiceServer interface {
 	Search(context.Context, *SearchRequest) (*SearchResponse, error)
 	Record(context.Context, *RecordRequest) (*RecordResponse, error)
