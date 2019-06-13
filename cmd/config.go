@@ -21,31 +21,33 @@ func SetupConfig() {
 			panic(err)
 		}
 	}
+
+	needWrite := false
 	configFile := WorkingPath + "/gojuon.yaml"
 	if _, err := os.Stat(configFile); os.IsNotExist(err) {
+		needWrite = true
 		if _, err := os.Create(configFile); err != nil {
 			panic(err)
 		}
 	}
 	viper.AddConfigPath(WorkingPath)
 	viper.SetConfigFile("yaml")
+	viper.SetConfigName("gojuon")
 	viper.SetDefault("global.rpc_addr", ":20443")
 	viper.SetDefault("global.log_file", "/gojuon.log")
-	viper.SetDefault("global.data", "/data")
+	viper.SetDefault("global.data", WorkingPath+"/data")
 
-	config, err := os.Open(configFile)
-	if err != nil {
-		panic(err)
-	}
-	if err := viper.ReadConfig(config); err != nil {
+	if err := viper.ReadInConfig(); err != nil {
 		panic(err)
 	}
 
 	LogFile = WorkingPath + viper.GetString("global.log_file")
 	RpcAddr = viper.GetString("global.rpc_addr")
-	SavingData = WorkingPath + viper.GetString("global.data")
+	SavingData = viper.GetString("global.data")
 
-	if err := viper.WriteConfigAs(configFile); err != nil {
-		panic(err)
+	if needWrite {
+		if err := viper.WriteConfigAs(configFile); err != nil {
+			panic(err)
+		}
 	}
 }
