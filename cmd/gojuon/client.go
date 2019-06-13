@@ -1,4 +1,4 @@
-package gojuon
+package main
 
 import (
 	"context"
@@ -46,6 +46,7 @@ func main() {
 		{
 			Name:    "recordWord",
 			Aliases: []string{"rw"},
+			Usage:   "search the meaning and record a japanese new word",
 			Flags: []cli.Flag{
 				cli.StringFlag{
 					Name:  "word",
