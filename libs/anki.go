@@ -2,11 +2,10 @@ package libs
 
 import (
 	"encoding/json"
+	"errors"
 	"fmt"
 	"net/http"
 	"net/http/httputil"
-
-	"github.com/pkg/errors"
 
 	"github.com/levigross/grequests"
 )
@@ -15,16 +14,36 @@ type Anki struct {
 	ankiUrl string
 }
 
-const defaultAnkiConnectVersion = 6
+func NewAnki(url string) *Anki {
+	return &Anki{
+		ankiUrl: url,
+	}
+}
 
 const (
-	defaultFront = `
+	defaultAnkiConnectVersion = 6
+	AnkiUrl                   = "http://localhost:8765"
+)
+
+var (
+	DefaultFields    = []string{"FrontField", "BackField1", "BackField2"}
+	DefaultTemplates = []map[string]string{
+		{
+			"Front": DefaultFront,
+			"Back":  DefaultBack,
+		},
+	}
+	DefaultTags = []string{"gojuon"}
+)
+
+const (
+	DefaultFront = `
 <div class="front">
 <span class="large japanese">{{FrontField}}</span>
 <br/
 </div>
 	`
-	defaultBack = `
+	DefaultBack = `
 <div class="back">
 <span class="large">{{BackField1}}</span>
 <hr/>
@@ -33,7 +52,7 @@ const (
 </span>
 </div>
 	`
-	defaultCSS = `
+	DefaultCSS = `
 div.front, div.back {
 	text-align:center;
 	font-family: Courier;
@@ -84,7 +103,7 @@ func (this *Anki) wrapRequest(ro *grequests.RequestOptions) (interface{}, error)
 	return result, nil
 }
 
-func (this *Anki) DeckNamesAndIds() (map[int64]Meta, error) {
+func (this *Anki) DeckNamesAndIds() (map[string]Meta, error) {
 	ro := &grequests.RequestOptions{
 		JSON:          map[string]interface{}{"action": "modelNamesAndIds", "version": defaultAnkiConnectVersion},
 		Headers:       defaultHeader,
@@ -136,7 +155,7 @@ func (this *Anki) DeleteDeck(deckName string, cardsToo bool) error {
 	return err
 }
 
-func (this *Anki) ModelNamesAndIds() (map[int64]Meta, error) {
+func (this *Anki) ModelNamesAndIds() (map[string]Meta, error) {
 	ro := &grequests.RequestOptions{
 		JSON: map[string]interface{}{
 			"action":  "modelNamesAndIds",
@@ -217,11 +236,11 @@ func logReqFunc(req *http.Request) error {
 	return nil
 }
 
-func mapToDeckMap(content map[string]interface{}) map[int64]Meta {
-	ret := make(map[int64]Meta)
+func mapToDeckMap(content map[string]interface{}) map[string]Meta {
+	ret := make(map[string]Meta)
 	for key, value := range content {
 		id := int64(value.(float64))
-		ret[id] = Meta{Name: key, Id: id}
+		ret[key] = Meta{Name: key, Id: id}
 	}
 	return ret
 }

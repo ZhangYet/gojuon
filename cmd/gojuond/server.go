@@ -5,6 +5,7 @@ import (
 	"net"
 	"os"
 	"os/signal"
+	"sync"
 	"time"
 
 	"github.com/gojp/nihongo/lib/dictionary"
@@ -23,6 +24,13 @@ import (
 )
 
 var _ gojuon_dict.DictServiceServer = &GojuonService{}
+
+var anki *libs.Anki
+
+const (
+	ankiDeck  = "gojuon_deck"
+	ankiModel = "gojuon_model"
+)
 
 type GojuonService struct {
 	manager libs.Manager
@@ -49,6 +57,7 @@ func (g *GojuonService) Search(_ context.Context, req *gojuon_dict.SearchRequest
 		Furigana: ret[0].Furigana,
 		English:  data.GetEnglish(ret[0]),
 	}
+
 	r := g.manager.Query(index)
 	if r.English != "" {
 		workRecord.CreateTime = &timestamp.Timestamp{
@@ -61,6 +70,38 @@ func (g *GojuonService) Search(_ context.Context, req *gojuon_dict.SearchRequest
 			Nanos:   0,
 		}
 	}
+	go func(japanese, furigana, english string) {
+		fields0 := map[string]string{
+			"FrontField": japanese,
+			"BackField1": furigana,
+			"BackField2": english,
+		}
+		fields1 := map[string]string{
+			"FrontField": furigana,
+			"BackField1": english,
+			"BackField2": japanese,
+		}
+		fields2 := map[string]string{
+			"FrontField": english,
+			"BackField1": japanese,
+			"BackField2": furigana,
+		}
+		fieldsList := []map[string]string{
+			fields0,
+			fields1,
+			fields2,
+		}
+		var wg sync.WaitGroup
+		for _, fields := range fieldsList {
+			wg.Add(1)
+			go func(f map[string]string) {
+				id, err := anki.AddNote(ankiDeck, ankiModel, f, libs.DefaultTags)
+				grpclog.Infof("add note to %s, id: %, err: %v\n", ankiDeck, id, err)
+				wg.Done()
+			}(fields)
+		}
+		wg.Wait()
+	}(workRecord.Japanese, workRecord.Furigana, workRecord.English)
 
 	rep = &gojuon_dict.SearchResponse{}
 	rep.Record = &workRecord
@@ -115,7 +156,7 @@ func setupLog(f *os.File) {
 	grpclog.SetLoggerV2(logger)
 }
 
-func main() {
+func init() {
 	cmd.SetupConfig()
 	f, err := os.Create(cmd.LogFile)
 	defer func() {
@@ -126,6 +167,36 @@ func main() {
 	}
 	setupLog(f)
 
+	anki = libs.NewAnki(libs.AnkiUrl)
+	decks, err := anki.DeckNamesAndIds()
+	if err != nil {
+		grpclog.Error(err)
+		return
+	}
+	if _, ok := decks[ankiDeck]; !ok {
+		id, err := anki.CreateDeck(ankiDeck)
+		if err != nil {
+			grpclog.Error(err)
+			return
+		}
+		grpclog.Infof("the id of anki deck is %d\n", id)
+	}
+	models, err := anki.ModelNamesAndIds()
+	if err != nil {
+		grpclog.Error(err)
+		return
+	}
+	if _, ok := models[ankiModel]; !ok {
+		err := anki.CreateModel(ankiModel, libs.DefaultFields, libs.DefaultCSS, libs.DefaultTemplates)
+		if err != nil {
+			grpclog.Error(err)
+			return
+		}
+		grpclog.Infof("created model sucessfully")
+	}
+}
+
+func main() {
 	lis, err := net.Listen("tcp", cmd.RpcAddr)
 	grpclog.Infof("listening on %s", cmd.RpcAddr)
 	if err != nil {

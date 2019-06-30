@@ -24,6 +24,7 @@ require (
 	github.com/motemen/go-loghttp v0.0.0-20170804080138-974ac5ceac27 // indirect
 	github.com/motemen/go-nuts v0.0.0-20180315145558-42c35bdb11c2 // indirect
 	github.com/pelletier/go-toml v1.4.0 // indirect
+	github.com/pkg/errors v0.8.1
 	github.com/prometheus/common v0.4.1 // indirect
 	github.com/prometheus/procfs v0.0.2 // indirect
 	github.com/prometheus/tsdb v0.8.0 // indirect

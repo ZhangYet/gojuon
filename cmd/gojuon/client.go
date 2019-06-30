@@ -1,4 +1,4 @@
-package gojuon
+package main
 
 import (
 	"context"

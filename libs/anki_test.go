@@ -4,8 +4,6 @@ import (
 	"testing"
 )
 
-const ankiUrl = "http://localhost:8765"
-
 func TestAnki_DeckNamesAndIds(t *testing.T) {
 	type fields struct {
 		ankiUrl string
@@ -18,7 +16,7 @@ func TestAnki_DeckNamesAndIds(t *testing.T) {
 		{
 			name: "Get Deck Names And Ids",
 			fields: fields{
-				ankiUrl: ankiUrl,
+				ankiUrl: AnkiUrl,
 			},
 			wantErr: false,
 		},
@@ -54,7 +52,7 @@ func TestAnki_CreateAndDeleteDeck(t *testing.T) {
 		{
 			name: "Create a new deck",
 			fields: fields{
-				ankiUrl: ankiUrl,
+				ankiUrl: AnkiUrl,
 			},
 			args: args{
 				deckName: "testDeck",
@@ -91,7 +89,7 @@ func TestAnki_ModelNamesAndIds(t *testing.T) {
 		{
 			name: "Get Model Names And Ids",
 			fields: fields{
-				ankiUrl: ankiUrl,
+				ankiUrl: AnkiUrl,
 			},
 		},
 	}
@@ -129,18 +127,13 @@ func TestAnki_CreateModel(t *testing.T) {
 		{
 			name: "Create models",
 			fields: fields{
-				ankiUrl: ankiUrl,
+				ankiUrl: AnkiUrl,
 			},
 			args: args{
 				modelName:     "gojuon_model_test",
-				inOrderFields: []string{"FrontField", "BackField1", "BackField2"},
-				css:           defaultCSS,
-				cardTemplates: []map[string]string{
-					{
-						"Front": defaultFront,
-						"Back":  defaultBack,
-					},
-				},
+				inOrderFields: DefaultFields,
+				css:           DefaultCSS,
+				cardTemplates: DefaultTemplates,
 			},
 		},
 	}
@@ -175,7 +168,7 @@ func TestAnki_AddNote(t *testing.T) {
 		{
 			name: "Add note",
 			fields: fields{
-				ankiUrl: ankiUrl,
+				ankiUrl: AnkiUrl,
 			},
 			args: args{
 				deckName:  "testDeck",
