@@ -14,6 +14,6 @@ packr2:
 server: proto packr2
 	go build -ldflags "-X main.Version=`git describe --tags || echo "nightly"`" -o bin/gojuond cmd/gojuond/server.go
 
-client: proto
+client: proto packr2
 	go build -ldflags "-X main.Version=`git describe --tags || echo "nightly"`" -o bin/gojuon cmd/gojuon/client.go
 

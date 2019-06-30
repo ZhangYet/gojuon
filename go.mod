@@ -15,11 +15,16 @@ require (
 	github.com/golang/gddo v0.0.0-20190419222130-af0f2af80721 // indirect
 	github.com/golang/mock v1.3.1 // indirect
 	github.com/golang/protobuf v1.3.1
+	github.com/google/go-querystring v1.0.0 // indirect
 	github.com/google/pprof v0.0.0-20190515194954-54271f7e092f // indirect
 	github.com/kisielk/errcheck v1.2.0 // indirect
 	github.com/kr/pty v1.1.4 // indirect
+	github.com/levigross/grequests v0.0.0-20190130132859-37c80f76a0da
 	github.com/magiconair/properties v1.8.1 // indirect
+	github.com/motemen/go-loghttp v0.0.0-20170804080138-974ac5ceac27 // indirect
+	github.com/motemen/go-nuts v0.0.0-20180315145558-42c35bdb11c2 // indirect
 	github.com/pelletier/go-toml v1.4.0 // indirect
+	github.com/pkg/errors v0.8.1
 	github.com/prometheus/common v0.4.1 // indirect
 	github.com/prometheus/procfs v0.0.2 // indirect
 	github.com/prometheus/tsdb v0.8.0 // indirect
