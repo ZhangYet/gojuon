@@ -1,6 +1,7 @@
 package main
 
 import (
+	"bufio"
 	"context"
 	"fmt"
 	"os"
@@ -20,6 +21,28 @@ var (
 	rpcConn   *grpc.ClientConn
 	rpcClient gojuon_dict.DictServiceClient
 )
+
+func shell() {
+	reader := bufio.NewReader(os.Stdin)
+	for {
+		fmt.Print("> ")
+		input, err := reader.ReadString('\n')
+		if err != nil {
+			panic(err)
+		}
+		ctx := context.Background()
+		in := gojuon_dict.SearchRequest{
+			Keyword: strings.Trim(input, "\n"),
+		}
+		rep, err := rpcClient.Search(ctx, &in)
+		if err != nil {
+			fmt.Fprintf(os.Stderr, err.Error())
+		}
+		output := fmt.Sprintf("Japanese:\t%s\nFurigana:\t%s\nEnglish:\t%s\n",
+			rep.Record.Japanese, rep.Record.Furigana, rep.Record.English)
+		fmt.Fprintf(os.Stdout, output)
+	}
+}
 
 func main() {
 	app := cli.NewApp()
@@ -43,6 +66,13 @@ func main() {
 		return nil
 	}
 	app.Commands = []cli.Command{
+		{
+			Name:    "shell",
+			Aliases: []string{"sh"},
+			Action: func(c *cli.Context) {
+				shell()
+			},
+		},
 		{
 			Name:    "recordWord",
 			Aliases: []string{"rw"},

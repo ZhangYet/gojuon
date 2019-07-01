@@ -34,14 +34,14 @@ func SetupConfig() {
 	viper.SetConfigFile("yaml")
 	viper.SetConfigName("gojuon")
 	viper.SetDefault("global.rpc_addr", ":20443")
-	viper.SetDefault("global.log_file", "/gojuon.log")
+	viper.SetDefault("global.log_file", WorkingPath+"/gojuon.log")
 	viper.SetDefault("global.data", WorkingPath+"/data")
 
 	if err := viper.ReadInConfig(); err != nil {
 		panic(err)
 	}
 
-	LogFile = WorkingPath + viper.GetString("global.log_file")
+	LogFile = viper.GetString("global.log_file")
 	RpcAddr = viper.GetString("global.rpc_addr")
 	SavingData = viper.GetString("global.data")
 
