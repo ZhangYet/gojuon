@@ -22,26 +22,36 @@ var (
 	rpcClient gojuon_dict.DictServiceClient
 )
 
-func shell() {
-	reader := bufio.NewReader(os.Stdin)
-	for {
-		fmt.Print("> ")
-		input, err := reader.ReadString('\n')
-		if err != nil {
-			panic(err)
-		}
+func shell(in, out *os.File) {
+	s := bufio.NewScanner(in)
+	prompt := getPrompt(in, out)
+	prompt()
+	src := ""
+	for s.Scan() {
+		src += s.Text()
 		ctx := context.Background()
 		in := gojuon_dict.SearchRequest{
-			Keyword: strings.Trim(input, "\n"),
+			Keyword: src,
 		}
 		rep, err := rpcClient.Search(ctx, &in)
 		if err != nil {
-			fmt.Fprintf(os.Stderr, err.Error())
+			_, _ = fmt.Fprintln(out, err)
+		} else {
+			_, _ = fmt.Fprintln(out, rep.Record.String())
 		}
-		output := fmt.Sprintf("Japanese:\t%s\nFurigana:\t%s\nEnglish:\t%s\n",
-			rep.Record.Japanese, rep.Record.Furigana, rep.Record.English)
-		fmt.Fprintf(os.Stdout, output)
+
+		src = ""
+		prompt()
 	}
+}
+
+func getPrompt(in, out *os.File) func() {
+	if stat, err := in.Stat(); err == nil && stat.Mode()&os.ModeCharDevice != 0 {
+		return func() {
+			_, _ = fmt.Fprint(out, "> ")
+		}
+	}
+	return func() {}
 }
 
 func main() {
@@ -70,7 +80,7 @@ func main() {
 			Name:    "shell",
 			Aliases: []string{"sh"},
 			Action: func(c *cli.Context) {
-				shell()
+				shell(os.Stdin, os.Stdout)
 			},
 		},
 		{
