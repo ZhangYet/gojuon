@@ -6,6 +6,7 @@ import (
 	"fmt"
 	"os"
 	"strings"
+	"unicode/utf8"
 
 	"github.com/urfave/cli"
 	"google.golang.org/grpc"
@@ -31,18 +32,25 @@ func shell(in, out *os.File) {
 		src += s.Text()
 		ctx := context.Background()
 		in := gojuon_dict.SearchRequest{
-			Keyword: src,
+			Keyword: cleanInput(src),
 		}
 		rep, err := rpcClient.Search(ctx, &in)
 		if err != nil {
+			input := fmt.Sprintf("%v", in)
+			_, _ = fmt.Fprintln(out, input)
 			_, _ = fmt.Fprintln(out, err)
 		} else {
-			_, _ = fmt.Fprintln(out, rep.Record.String())
+			_, _ = fmt.Fprintln(out, printRecord(*rep.Record))
 		}
 
 		src = ""
 		prompt()
 	}
+}
+
+func printRecord(record gojuon_dict.WordRecord) string {
+	return fmt.Sprintf("Japanese: %s, Furiganan: %s, English: %s",
+		record.Japanese, record.Furigana, record.English)
 }
 
 func getPrompt(in, out *os.File) func() {
@@ -143,4 +151,14 @@ func main() {
 	if err != nil {
 		panic(err)
 	}
+}
+
+func cleanInput(input string) string {
+	fixUtf := func(r rune) rune {
+		if r == utf8.RuneError {
+			return -1
+		}
+		return r
+	}
+	return strings.Map(fixUtf, input)
 }
